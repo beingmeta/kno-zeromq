@@ -20,14 +20,12 @@ static int zeromq_loglevel = 4;
 #include "kno/eval.h"
 #include "kno/cprims.h"
 
-#include "kno/zeromq.h"
+#include "zeromq.h"
 
 #include "libu8/u8printf.h"
 #include "libu8/u8convert.h"
 
 #include "zeromq_sockopts.h"
-#include "kno/cprims.h"
-
 
 #define ZMQ_SOCK_REF(x,i) KNO_ZMQ_SOCK_REF(x,i)
 #define ZMQ_SOCKETS(x)    KNO_ZMQ_SOCKETS(x)
