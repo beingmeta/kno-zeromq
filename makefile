@@ -82,6 +82,9 @@ debian.updated: debian.signed
 
 update-apt: debian.updated
 
+debinstall: debian.signed
+	${SUDO} dpkg -i ../kno-zeromq*.deb
+
 debclean:
 	rm -f ../kno-zeromq_* ../kno-zeromq-* debian/changelog
 
