@@ -65,11 +65,17 @@ fresh:
 	make clean
 	make default
 
-debian/changelog: makefile zeromq.c \
-		  debian/rules debian/control debian/changelog.base
+debian: zeromq.c makefile \
+	dist/debian/rules dist/debian/control \
+	dist/debian/changelog.base
+	rm -rf debian
+	cp -r dist/debian debian
+	cat debian/changelog.base | etc/gitchangelog kno-zeromq > debian/changelog
+
+debian/changelog: debian zeromq.c makefile
 	cat debian/changelog.base | etc/gitchangelog kno-zeromq > $@
 
-debian.built: zeromq.c makefile debian/rules debian/control debian/changelog
+debian.built: zeromq.c makefile debian debian/changelog
 	dpkg-buildpackage -sa -us -uc -b -rfakeroot && \
 	touch $@
 
