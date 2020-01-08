@@ -97,7 +97,7 @@ update-apt: dist/debian.updated
 debinstall: dist/debian.signed
 	${SUDO} dpkg -i ../kno-zeromq*.deb
 
-debclean:
+debclean: clean
 	rm -rf ../kno-zeromq_* ../kno-zeromq-* debian dist/debian.*
 
 debfresh:
