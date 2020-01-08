@@ -70,10 +70,12 @@ debian: zeromq.c makefile \
 	dist/debian/changelog.base
 	rm -rf debian
 	cp -r dist/debian debian
-	cat debian/changelog.base | etc/gitchangelog kno-zeromq > debian/changelog
 
 debian/changelog: debian zeromq.c makefile
-	cat debian/changelog.base | etc/gitchangelog kno-zeromq > $@
+	cat debian/changelog.base | etc/gitchangelog kno-zeromq > $@.tmp
+	if diff debian/changelog debian/changelog.tmp 2>&1 > /dev/null; then \
+	  mv debian/changelog.tmp debian/changelog; \
+	else rm debian/changelog.tmp; fi
 
 debian.built: zeromq.c makefile debian debian/changelog
 	dpkg-buildpackage -sa -us -uc -b -rfakeroot && \
@@ -82,6 +84,8 @@ debian.built: zeromq.c makefile debian debian/changelog
 debian.signed: debian.built
 	debsign --re-sign -k${GPGID} ../kno-zeromq_*.changes && \
 	touch $@
+
+dpkg dpkgs: debian.signed
 
 debian.updated: debian.signed
 	dupload -c ./debian/dupload.conf --nomail --to bionic ../kno-zeromq_*.changes && touch $@
