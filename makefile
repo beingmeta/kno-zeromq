@@ -98,7 +98,7 @@ debinstall: dist/debian.signed
 	${SUDO} dpkg -i ../kno-zeromq*.deb
 
 debclean:
-	rm -f ../kno-zeromq_* ../kno-zeromq-* debian/changelog
+	rm -rf ../kno-zeromq_* ../kno-zeromq-* debian
 
 debfresh:
 	make debclean
