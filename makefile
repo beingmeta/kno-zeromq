@@ -90,7 +90,7 @@ dist/debian.signed: dist/debian.built
 deb debs dpkg dpkgs: dist/debian.signed
 
 dist/debian.updated: dist/debian.signed
-	dupload -c ./debian/dupload.conf --nomail --to bionic ../kno-zeromq_*.changes && touch $@
+	dupload -c ./dist/dupload.conf --nomail --to bionic ../kno-zeromq_*.changes && touch $@
 
 update-apt: dist/debian.updated
 
