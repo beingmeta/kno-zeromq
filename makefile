@@ -1,9 +1,10 @@
+KNOCONFIG       ::= knoconfig
 prefix		::= $(shell knoconfig prefix)
 libsuffix	::= $(shell knoconfig libsuffix)
 KNO_CFLAGS	::= -I. -fPIC $(shell knoconfig cflags)
 KNO_LDFLAGS	::= -fPIC $(shell knoconfig ldflags)
-ZMQ_CFLAGS    ::= $(shell etc/pkc --cflags libzmq)
-ZMQ_LDFLAGS   ::= $(shell etc/pkc --libs libzmq)
+ZMQ_CFLAGS      ::= $(shell etc/pkc --cflags libzmq)
+ZMQ_LDFLAGS     ::= $(shell etc/pkc --libs libzmq)
 CFLAGS		::= ${CFLAGS} ${ZMQ_CFLAGS} ${KNO_CFLAGS} 
 LDFLAGS		::= ${LDFLAGS} ${ZMQ_LDFLAGS} ${KNO_LDFLAGS}
 CMODULES	::= $(DESTDIR)$(shell knoconfig cmodules)
@@ -32,6 +33,7 @@ zeromq.o: zeromq.c makefile
 	@$(MSG) CC "(ZEROMQ)" $@
 zeromq.so: zeromq.o
 	$(MKSO) $(LDFLAGS) -o $@ zeromq.o ${LDFLAGS}
+	@if test ! -z "${COPY_CMODS}"; then cp $@ ${COPY_CMODS}; fi;
 	@$(MSG) MKSO  $@ $<
 	@ln -sf $(@F) $(@D)/$(@F).${KNO_MAJOR}
 zeromq.dylib: zeromq.c makefile
@@ -39,6 +41,7 @@ zeromq.dylib: zeromq.c makefile
 		`basename $(@F) .dylib`.${KNO_MAJOR}.dylib \
 		${CFLAGS} ${LDFLAGS} -o $@ $(DYLIB_FLAGS) \
 		zeromq.c
+	@if test ! -z "${COPY_CMODS}"; then cp $@ ${COPY_CMODS}; fi;
 	@$(MSG) MACLIBTOOL  $@ $<
 
 TAGS: zeromq.c
