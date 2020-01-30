@@ -22,6 +22,7 @@ SYSINSTALL      ::= /usr/bin/install -c
 MOD_NAME	::= zeromq
 MOD_RELEASE     ::= $(shell cat etc/release)
 MOD_VERSION	::= ${KNO_MAJOR}.${KNO_MINOR}.${MOD_RELEASE}
+APKREPO		::= $(shell ${KNOCONFIG} apkrepo)
 
 GPGID = FE1BC737F9F323D732AA26330620266BE5AFF294
 SUDO  = $(shell which sudo)
@@ -106,3 +107,22 @@ debclean: clean
 debfresh:
 	make debclean
 	make dist/debian.built
+
+# Alpine packaging
+
+staging/alpine/APKBUILD: dist/alpine/APKBUILD
+	if test ! -d staging; then mkdir staging; fi
+	if test ! -d staging/alpine; then mkdir staging/alpine; fi
+	cp dist/alpine/APKBUILD staging/alpine/APKBUILD
+
+dist/alpine.done: staging/alpine/APKBUILD
+	cd dist/alpine; \
+		abuild -P ${APKREPO} clean cleancache cleanpkg
+	cd staging/alpine; \
+		abuild -P ${APKREPO} checksum && \
+		abuild -P ${APKREPO} && \
+		cd ../..; touch $@
+
+alpine: dist/alpine.done
+
+.PHONY: alpine

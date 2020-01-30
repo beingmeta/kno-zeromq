@@ -1,0 +1,29 @@
+# Contributor: beingmeta repository manager <repoman@beingmeta.com>
+# Maintainer: beingmeta repository manager <repoman@beingmeta.com>
+pkgname=kno-zeromq
+pkgver=$(knoconfig major).$(knoconfig minor).1
+pkgrel=18
+pkgdesc="Sundown (Markdown) bindings for KNO"
+url="https://kno.so/"
+arch="all"
+license="GPLV3"
+depends=""
+makedepends="kno"
+install=""
+#subpackages="$pkgname-dev $pkgname-doc"
+subpackages=""
+source="https://github.com/beingmeta/kno-sundown/archive/trunk.tar.gz"
+builddir="kno-sundown-trunk"
+
+build() {
+	make -j
+}
+
+check() {
+	make
+}
+
+package() {
+	cd src/${builddir}
+	make DESTDIR="$pkgdir" SUDO= install
+}
