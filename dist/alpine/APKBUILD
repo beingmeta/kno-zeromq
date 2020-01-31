@@ -12,8 +12,8 @@ makedepends="kno"
 install=""
 #subpackages="$pkgname-dev $pkgname-doc"
 subpackages=""
-source="https://github.com/beingmeta/kno-sundown/archive/trunk.tar.gz"
-builddir="kno-sundown-trunk"
+source="kno-zeromq.tar"
+builddir="${srcdir}/kno-zeromq"
 
 build() {
 	make -j
@@ -24,6 +24,5 @@ check() {
 }
 
 package() {
-	cd src/${builddir}
 	make DESTDIR="$pkgdir" SUDO= install
 }
