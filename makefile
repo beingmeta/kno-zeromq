@@ -19,15 +19,15 @@ DPKG_NAME	::= $(shell ./etc/dpkgname)
 MKSO		::= $(CC) -shared $(CFLAGS) $(LDFLAGS) $(LIBS)
 MSG		::= echo
 SYSINSTALL      ::= /usr/bin/install -c
-MOD_NAME	::= zeromq
-MOD_RELEASE     ::= $(shell cat etc/release)
-MOD_VERSION	::= ${KNO_MAJOR}.${KNO_MINOR}.${MOD_RELEASE}
+PKG_NAME	::= zeromq
+PKG_RELEASE     ::= $(shell cat etc/release)
+PKG_VERSION	::= ${KNO_MAJOR}.${KNO_MINOR}.${PKG_RELEASE}
 APKREPO		::= $(shell ${KNOCONFIG} apkrepo)
 
 GPGID = FE1BC737F9F323D732AA26330620266BE5AFF294
 SUDO  = $(shell which sudo)
 
-default build: ${MOD_NAME}.${libsuffix}
+default build: ${PKG_NAME}.${libsuffix}
 
 zeromq.o: zeromq.c makefile
 	@$(CC) $(CFLAGS) -o $@ -c $<
@@ -52,19 +52,19 @@ ${CMODULES}:
 	install -d $@
 
 install: build ${CMODULES}
-	@${SUDO} ${SYSINSTALL} ${MOD_NAME}.${libsuffix} \
-			${CMODULES}/${MOD_NAME}.so.${MOD_VERSION}
-	@echo === Installed ${CMODULES}/${MOD_NAME}.so.${MOD_VERSION}
-	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} \
-			${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}
-	@echo === Linked ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}.${KNO_MINOR} \
-		to ${MOD_NAME}.so.${MOD_VERSION}
-	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} \
-			${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR}
-	@echo === Linked ${CMODULES}/${MOD_NAME}.so.${KNO_MAJOR} \
-		to ${MOD_NAME}.so.${MOD_VERSION}
-	@${SUDO} ln -sf ${MOD_NAME}.so.${MOD_VERSION} ${CMODULES}/${MOD_NAME}.so
-	@echo === Linked ${CMODULES}/${MOD_NAME}.so to ${MOD_NAME}.so.${MOD_VERSION}
+	@${SUDO} ${SYSINSTALL} ${PKG_NAME}.${libsuffix} \
+			${CMODULES}/${PKG_NAME}.so.${PKG_VERSION}
+	@echo === Installed ${CMODULES}/${PKG_NAME}.so.${PKG_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} \
+			${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}
+	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR} \
+		to ${PKG_NAME}.so.${PKG_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} \
+			${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}
+	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR} \
+		to ${PKG_NAME}.so.${PKG_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} ${CMODULES}/${PKG_NAME}.so
+	@echo === Linked ${CMODULES}/${PKG_NAME}.so to ${PKG_NAME}.so.${PKG_VERSION}
 
 clean:
 	rm -f *.o *.${libsuffix}
@@ -122,11 +122,11 @@ staging/alpine:
 staging/alpine/APKBUILD: dist/alpine/APKBUILD staging/alpine
 	cp dist/alpine/APKBUILD staging/alpine
 
-staging/alpine/kno-${MOD_NAME}.tar: staging/alpine
-	git archive --prefix=kno-${MOD_NAME}/ -o staging/alpine/kno-${MOD_NAME}.tar HEAD
+staging/alpine/kno-${PKG_NAME}.tar: staging/alpine
+	git archive --prefix=kno-${PKG_NAME}/ -o staging/alpine/kno-${PKG_NAME}.tar HEAD
 
 dist/alpine.done: staging/alpine/APKBUILD makefile \
-	staging/alpine/kno-${MOD_NAME}.tar ${APKREPO}/dist/x86_64
+	staging/alpine/kno-${PKG_NAME}.tar ${APKREPO}/dist/x86_64
 	cd staging/alpine; \
 		abuild -P ${APKREPO} clean cleancache cleanpkg && \
 		abuild checksum && \
