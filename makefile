@@ -3,12 +3,6 @@ KNOBUILD          = knobuild
 
 prefix		::= $(shell knoconfig prefix)
 libsuffix	::= $(shell knoconfig libsuffix)
-KNO_CFLAGS	::= -I. -fPIC $(shell knoconfig cflags)
-KNO_LDFLAGS	::= -fPIC $(shell knoconfig ldflags)
-ZMQ_CFLAGS      ::= $(shell etc/pkc --cflags libzmq)
-ZMQ_LDFLAGS     ::= $(shell etc/pkc --libs libzmq)
-INIT_CFLAGS     ::= ${CFLAGS}
-INIT_LDFLAGS    ::= ${LDFLAGS}
 CMODULES	::= $(DESTDIR)$(shell knoconfig cmodules)
 LIBS		::= $(shell knoconfig libs)
 LIB		::= $(shell knoconfig lib)
@@ -19,6 +13,13 @@ KNO_MINOR	::= $(shell knoconfig minor)
 PKG_RELEASE	::= $(cat ./etc/release)
 DPKG_NAME	::= $(shell ./etc/dpkgname)
 SUDO            ::= $(shell which sudo)
+
+INIT_CFLAGS     ::= ${CFLAGS}
+INIT_LDFLAGS    ::= ${LDFLAGS}
+KNO_CFLAGS	::= -I. -fPIC $(shell knoconfig cflags)
+KNO_LDFLAGS	::= -fPIC $(shell knoconfig ldflags)
+ZMQ_CFLAGS      ::= $(shell etc/pkc --cflags libzmq)
+ZMQ_LDFLAGS     ::= $(shell etc/pkc --libs libzmq)
 
 CFLAGS		  = ${INIT_CFLAGS} ${ZMQ_CFLAGS} ${KNO_CFLAGS} 
 LDFLAGS		  = ${INIT_LDFLAGS} ${ZMQ_LDFLAGS} ${KNO_LDFLAGS}
@@ -32,7 +33,6 @@ PKG_VERSION	  = ${KNO_MAJOR}.${KNO_MINOR}.${PKG_RELEASE}
 PKG_RELEASE     ::= $(shell cat etc/release)
 CODENAME	::= $(shell ${KNOCONFIG} codename)
 RELSTATUS	::= $(shell ${KNOBUILD} getbuildopt BUILDSTATUS stable)
-DEFAULT_ARCH    ::= $(shell uname -m)
 ARCH            ::= $(shell ${KNOBUILD} getbuildopt BUILD_ARCH || uname -m)
 APKREPO         ::= $(shell ${KNOBUILD} getbuildopt APKREPO /srv/repo/kno/apk)
 APK_ARCH_DIR      = ${APKREPO}/staging/${ARCH}
