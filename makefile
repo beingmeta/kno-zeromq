@@ -1,23 +1,23 @@
 KNOCONFIG         = knoconfig
 KNOBUILD          = knobuild
 
-prefix		::= $(shell knoconfig prefix)
-libsuffix	::= $(shell knoconfig libsuffix)
-CMODULES	::= $(DESTDIR)$(shell knoconfig cmodules)
-LIBS		::= $(shell knoconfig libs)
-LIB		::= $(shell knoconfig lib)
-INCLUDE		::= $(shell knoconfig include)
-KNO_VERSION	::= $(shell knoconfig version)
-KNO_MAJOR	::= $(shell knoconfig major)
-KNO_MINOR	::= $(shell knoconfig minor)
+prefix		::= $(shell ${KNOCONFIG} prefix)
+libsuffix	::= $(shell ${KNOCONFIG} libsuffix)
+CMODULES	::= $(DESTDIR)$(shell ${KNOCONFIG} cmodules)
+LIBS		::= $(shell ${KNOCONFIG} libs)
+LIB		::= $(shell ${KNOCONFIG} lib)
+INCLUDE		::= $(shell ${KNOCONFIG} include)
+KNO_VERSION	::= $(shell ${KNOCONFIG} version)
+KNO_MAJOR	::= $(shell ${KNOCONFIG} major)
+KNO_MINOR	::= $(shell ${KNOCONFIG} minor)
 PKG_RELEASE	::= $(cat ./etc/release)
 DPKG_NAME	::= $(shell ./etc/dpkgname)
 SUDO            ::= $(shell which sudo)
 
 INIT_CFLAGS     ::= ${CFLAGS}
 INIT_LDFLAGS    ::= ${LDFLAGS}
-KNO_CFLAGS	::= -I. -fPIC $(shell knoconfig cflags)
-KNO_LDFLAGS	::= -fPIC $(shell knoconfig ldflags)
+KNO_CFLAGS	::= -I. -fPIC $(shell ${KNOCONFIG} cflags)
+KNO_LDFLAGS	::= -fPIC $(shell ${KNOCONFIG} ldflags)
 ZMQ_CFLAGS      ::= $(shell etc/pkc --cflags libzmq)
 ZMQ_LDFLAGS     ::= $(shell etc/pkc --libs libzmq)
 
