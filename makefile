@@ -10,10 +10,16 @@ INCLUDE		::= $(shell ${KNOCONFIG} include)
 KNO_VERSION	::= $(shell ${KNOCONFIG} version)
 KNO_MAJOR	::= $(shell ${KNOCONFIG} major)
 KNO_MINOR	::= $(shell ${KNOCONFIG} minor)
-PKG_RELEASE	::= $(cat ./etc/release)
-DPKG_NAME	::= $(shell ./etc/dpkgname)
-SUDO            ::= $(shell which sudo)
+PKG_VERSION     ::= $(shell cat ./version)
+PKG_MAJOR       ::= $(shell cat ./version | cut -d. -f1)
+FULL_VERSION    ::= ${KNO_MAJOR}.${KNO_MINOR}.${PKG_VERSION}
+PATCHLEVEL      ::= $(shell u8_gitpatchcount ./version)
+PATCH_VERSION   ::= ${FULL_VERSION}-${PATCHLEVEL}
 
+PKG_NAME	::= zeromq
+DPKG_NAME	::= ${PKG_NAME}_${PATCH_VERSION}
+
+SUDO            ::= $(shell which sudo)
 INIT_CFLAGS     ::= ${CFLAGS}
 INIT_LDFLAGS    ::= ${LDFLAGS}
 KNO_CFLAGS	::= -I. -fPIC $(shell ${KNOCONFIG} cflags)
@@ -27,10 +33,7 @@ MKSO		  = $(CC) -shared $(CFLAGS) $(LDFLAGS) $(LIBS)
 SYSINSTALL        = /usr/bin/install -c
 MSG		  = echo
 
-PKG_NAME	  = zeromq
 GPGID             = FE1BC737F9F323D732AA26330620266BE5AFF294
-PKG_VERSION	  = ${KNO_MAJOR}.${KNO_MINOR}.${PKG_RELEASE}
-PKG_RELEASE     ::= $(shell cat etc/release)
 CODENAME	::= $(shell ${KNOCONFIG} codename)
 REL_BRANCH	::= $(shell ${KNOBUILD} getbuildopt REL_BRANCH current)
 REL_STATUS	::= $(shell ${KNOBUILD} getbuildopt REL_STATUS stable)
@@ -38,7 +41,6 @@ REL_PRIORITY	::= $(shell ${KNOBUILD} getbuildopt REL_PRIORITY medium)
 ARCH            ::= $(shell ${KNOBUILD} getbuildopt BUILD_ARCH || uname -m)
 APKREPO         ::= $(shell ${KNOBUILD} getbuildopt APKREPO /srv/repo/kno/apk)
 APK_ARCH_DIR      = ${APKREPO}/staging/${ARCH}
-ABUILD_FLAGS      =
 
 default build: ${PKG_NAME}.${libsuffix}
 
@@ -66,18 +68,22 @@ ${CMODULES}:
 
 install: build ${CMODULES}
 	@${SUDO} ${SYSINSTALL} ${PKG_NAME}.${libsuffix} \
-			${CMODULES}/${PKG_NAME}.so.${PKG_VERSION}
-	@echo === Installed ${CMODULES}/${PKG_NAME}.so.${PKG_VERSION}
-	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} \
+			${CMODULES}/${PKG_NAME}.so.${FULL_VERSION}
+	@echo === Installed ${CMODULES}/${PKG_NAME}.so.${FULL_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${FULL_VERSION} \
+			${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}.${PKG_MAJOR}
+	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}.${PKG_MAJOR} \
+		to ${PKG_NAME}.so.${FULL_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${FULL_VERSION} \
 			${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR}
 	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}.${KNO_MINOR} \
-		to ${PKG_NAME}.so.${PKG_VERSION}
-	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} \
+		to ${PKG_NAME}.so.${FULL_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${FULL_VERSION} \
 			${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR}
 	@echo === Linked ${CMODULES}/${PKG_NAME}.so.${KNO_MAJOR} \
-		to ${PKG_NAME}.so.${PKG_VERSION}
-	@${SUDO} ln -sf ${PKG_NAME}.so.${PKG_VERSION} ${CMODULES}/${PKG_NAME}.so
-	@echo === Linked ${CMODULES}/${PKG_NAME}.so to ${PKG_NAME}.so.${PKG_VERSION}
+		to ${PKG_NAME}.so.${FULL_VERSION}
+	@${SUDO} ln -sf ${PKG_NAME}.so.${FULL_VERSION} ${CMODULES}/${PKG_NAME}.so
+	@echo === Linked ${CMODULES}/${PKG_NAME}.so to ${PKG_NAME}.so.${FULL_VERSION}
 
 clean:
 	rm -f *.o *.${libsuffix}
@@ -146,16 +152,22 @@ staging/alpine/APKBUILD: dist/alpine/APKBUILD staging/alpine
 staging/alpine/kno-${PKG_NAME}.tar: staging/alpine
 	git archive --prefix=kno-${PKG_NAME}/ -o staging/alpine/kno-${PKG_NAME}.tar HEAD
 
-dist/alpine.done: staging/alpine/APKBUILD makefile \
+dist/alpine.setup: staging/alpine/APKBUILD makefile ${STATICLIBS} \
 	staging/alpine/kno-${PKG_NAME}.tar
-	if [ ! -d ${APK_ARCH_DIR} ]; then mkdir -p ${APK_ARCH_DIR}; fi;
-	cd staging/alpine; \
+	if [ ! -d ${APK_ARCH_DIR} ]; then mkdir -p ${APK_ARCH_DIR}; fi && \
+	( cd staging/alpine; \
 		abuild -P ${APKREPO} clean cleancache cleanpkg && \
-		abuild checksum && \
-		abuild -P ${APKREPO} ${ABUILD_FLAGS} && \
-		touch ../../$@
+		abuild checksum ) && \
+	touch $@
+
+dist/alpine.done: dist/alpine.setup
+	( cd staging/alpine; abuild -P ${APKREPO} ) && touch $@
+dist/alpine.installed: dist/alpine.setup
+	( cd staging/alpine; abuild -i -P ${APKREPO} ) && touch dist/alpine.done && touch $@
+
 
 alpine: dist/alpine.done
+install-alpine: dist/alpine.done
 
 .PHONY: alpine
 
