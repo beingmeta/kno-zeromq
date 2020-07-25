@@ -49,7 +49,6 @@ zeromq.o: zeromq.c makefile
 	@$(MSG) CC "(ZEROMQ)" $@
 zeromq.so: zeromq.o
 	$(MKSO) $(LDFLAGS) -o $@ zeromq.o ${LDFLAGS}
-	@if test ! -z "${COPY_CMODS}"; then cp $@ ${COPY_CMODS}; fi;
 	@$(MSG) MKSO  $@ $<
 	@ln -sf $(@F) $(@D)/$(@F).${KNO_MAJOR}
 zeromq.dylib: zeromq.c makefile
@@ -57,7 +56,6 @@ zeromq.dylib: zeromq.c makefile
 		`basename $(@F) .dylib`.${KNO_MAJOR}.dylib \
 		${CFLAGS} ${LDFLAGS} -o $@ $(DYLIB_FLAGS) \
 		zeromq.c
-	@if test ! -z "${COPY_CMODS}"; then cp $@ ${COPY_CMODS}; fi;
 	@$(MSG) MACLIBTOOL  $@ $<
 
 TAGS: zeromq.c
