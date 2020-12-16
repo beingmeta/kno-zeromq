@@ -37,6 +37,7 @@ static u8_condition ZeroMQ_WrongThread =
 KNO_EXPORT int kno_init_zeromq(void) KNO_LIBINIT_FN;
 
 kno_lisp_type kno_zmqsock_type;
+#define KNO_ZMQSOCK_TYPE kno_any_type
 
 #if DEBUG_ZEROMQ
 static u8_mutex socket_counter_lock;
@@ -113,8 +114,10 @@ KNO_EXPORT void *kno_init_zeromq_ctx()
   return kno_zeromq_ctx;
 }
 
-DEFPRIM("zeromq/shutdown!",zeromq_shutdown_prim,KNO_MAX_ARGS(0)|KNO_MIN_ARGS(0),
-	"Shuts down the current ZeroMQ session/context");
+
+KNO_DEFCPRIM("zeromq/shutdown!",zeromq_shutdown_prim,
+	     KNO_MAX_ARGS(0)|KNO_MIN_ARGS(0),
+	     "Shuts down the current ZeroMQ session/context")
 static lispval zeromq_shutdown_prim()
 {
   if (kno_zeromq_ctx) {
@@ -298,8 +301,11 @@ static lispval zmq_error(u8_context cxt,lispval obj)
 
 /* Sockets */
 
-DEFPRIM("zmq/socket",zmq_socket_prim,KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
-	"Creates a ZMQ socket");
+
+KNO_DEFCPRIM("zmq/socket",zmq_socket_prim,
+	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
+	     "Creates a ZMQ socket",
+	     "typename",kno_any_type,KNO_VOID)
 static lispval zmq_socket_prim(lispval typename)
 {
   struct KNO_ZMQSOCK *sockptr = zmq_sock(typename);
@@ -308,8 +314,11 @@ static lispval zmq_socket_prim(lispval typename)
   else return KNO_ERROR;
 }
 
-DEFPRIM("zmq/close",zmq_close_prim,KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
-	"Closes a ZMQ socket");
+
+KNO_DEFCPRIM("zmq/close",zmq_close_prim,
+	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
+	     "Closes a ZMQ socket",
+	     "s",kno_any_type,KNO_VOID)
 static lispval zmq_close_prim(lispval s)
 {
   ZMQ_CHECK_SOCK(s,"ZMQ/BIND!");
@@ -322,8 +331,12 @@ static lispval zmq_close_prim(lispval s)
   else return KNO_FALSE;
 }
 
-DEFPRIM("zmq/bind!",zmq_bind_prim,KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
-	"Binds a ZMQ socket to an address");
+
+KNO_DEFCPRIM("zmq/bind!",zmq_bind_prim,
+	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
+	     "Binds a ZMQ socket to an address",
+	     "s",kno_any_type,KNO_VOID,
+	     "address",kno_any_type,KNO_VOID)
 static lispval zmq_bind_prim(lispval s,lispval address)
 {
   ZMQ_CHECK_SOCK(s,"ZMQ/BIND!");
@@ -336,8 +349,12 @@ static lispval zmq_bind_prim(lispval s,lispval address)
   else return zmq_error("ZMQ/BIND!",address);
 }
 
-DEFPRIM("zmq/unbind!",zmq_unbind_prim,KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
-	"Unbinds a ZMQ socket from an address");
+
+KNO_DEFCPRIM("zmq/unbind!",zmq_unbind_prim,
+	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
+	     "Unbinds a ZMQ socket from an address",
+	     "s",kno_any_type,KNO_VOID,
+	     "address",kno_any_type,KNO_VOID)
 static lispval zmq_unbind_prim(lispval s,lispval address)
 {
   ZMQ_CHECK_SOCK(s,"ZMQ/UNBIND!");
@@ -350,8 +367,12 @@ static lispval zmq_unbind_prim(lispval s,lispval address)
   else return zmq_error("ZMQ/UNBIND!",address);
 }
 
-DEFPRIM("zmq/connect!",zmq_connect_prim,KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
-	"Connects a ZMQ socket to an address");
+
+KNO_DEFCPRIM("zmq/connect!",zmq_connect_prim,
+	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
+	     "Connects a ZMQ socket to an address",
+	     "s",kno_any_type,KNO_VOID,
+	     "address",kno_any_type,KNO_VOID)
 static lispval zmq_connect_prim(lispval s,lispval address)
 {
   ZMQ_CHECK_SOCK(s,"ZMQ/CONNECT!");
@@ -364,8 +385,12 @@ static lispval zmq_connect_prim(lispval s,lispval address)
   else return zmq_error("ZMQ/CONNECT!",address);
 }
 
-DEFPRIM("zmq/disconnect!",zmq_disconnect_prim,KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
-	"Disconnects a ZMQ socket to an address");
+
+KNO_DEFCPRIM("zmq/disconnect!",zmq_disconnect_prim,
+	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
+	     "Disconnects a ZMQ socket to an address",
+	     "s",kno_any_type,KNO_VOID,
+	     "address",kno_any_type,KNO_VOID)
 static lispval zmq_disconnect_prim(lispval s,lispval address)
 {
   ZMQ_CHECK_SOCK(s,"ZMQ/DISCONNECT!");
@@ -380,8 +405,12 @@ static lispval zmq_disconnect_prim(lispval s,lispval address)
 
 /* Sockopts */
 
-DEFPRIM("zmq/sockopt",zmq_getsockopt_prim,KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
-	"Gets a socket option");
+
+KNO_DEFCPRIM("zmq/sockopt",zmq_getsockopt_prim,
+	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
+	     "Gets a socket option",
+	     "socket",kno_any_type,KNO_VOID,
+	     "optname",kno_any_type,KNO_VOID)
 static lispval zmq_getsockopt_prim(lispval socket,lispval optname)
 {
   ZMQ_CHECK_SOCK(socket,"ZMQ/DISCONNECT!");
@@ -443,8 +472,13 @@ static lispval zmq_getsockopt_prim(lispval socket,lispval optname)
     return KNO_FALSE;}
 }
 
-DEFPRIM("zmq/sockopt!",zmq_setsockopt_prim,KNO_MAX_ARGS(3)|KNO_MIN_ARGS(3),
-	"Sets a socket option");
+
+KNO_DEFCPRIM("zmq/sockopt!",zmq_setsockopt_prim,
+	     KNO_MAX_ARGS(3)|KNO_MIN_ARGS(3),
+	     "Sets a socket option",
+	     "socket",kno_any_type,KNO_VOID,
+	     "optname",kno_any_type,KNO_VOID,
+	     "value",kno_any_type,KNO_VOID)
 static lispval zmq_setsockopt_prim(lispval socket,lispval optname,
 				   lispval value)
 {
@@ -518,8 +552,12 @@ static lispval zmq_setsockopt_prim(lispval socket,lispval optname,
 
 /* High level operations */
 
-DEFPRIM("zmq/open",zmq_open_prim,KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
-	"Opens a ZMQ socket on an address");
+
+KNO_DEFCPRIM("zmq/open",zmq_open_prim,
+	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
+	     "Opens a ZMQ socket on an address",
+	     "address",kno_any_type,KNO_VOID,
+	     "typename",kno_any_type,KNO_VOID)
 static lispval zmq_open_prim(lispval address,lispval typename)
 {
   void *ctx = KNO_ZMQ_CTX;
@@ -542,8 +580,12 @@ static lispval zmq_open_prim(lispval address,lispval typename)
     return zmq_error("ZMQ/OPEN",address);}
 }
 
-DEFPRIM("zmq/listen",zmq_listen_prim,KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
-	"Opens a ZMQ socket on an address");
+
+KNO_DEFCPRIM("zmq/listen",zmq_listen_prim,
+	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(2),
+	     "Opens a ZMQ socket on an address",
+	     "address",kno_any_type,KNO_VOID,
+	     "type",kno_any_type,KNO_VOID)
 static lispval zmq_listen_prim(lispval address,lispval type)
 {
   void *ctx = KNO_ZMQ_CTX;
@@ -574,8 +616,13 @@ static void free_lisp_wrapper(void *data,void *vptr)
   kno_decref(val);
 }
 
-DEFPRIM("zmq/send!",zmq_send_prim,KNO_MAX_ARGS(3)|KNO_MIN_ARGS(2),
-	"Sends a string or packet to a socket");
+
+KNO_DEFCPRIM("zmq/send!",zmq_send_prim,
+	     KNO_MAX_ARGS(3)|KNO_MIN_ARGS(2),
+	     "Sends a string or packet to a socket",
+	     "s",kno_any_type,KNO_VOID,
+	     "data",kno_any_type,KNO_VOID,
+	     "opts",kno_any_type,KNO_VOID)
 static lispval zmq_send_prim(lispval s,lispval data,lispval opts)
 {
   ZMQ_CHECK_SOCK(s,"ZMQ/SEND!");
@@ -632,8 +679,12 @@ static lispval zmq_send_prim(lispval s,lispval data,lispval opts)
   else return zmq_error("ZMQ/SEND!",s);
 }
 
-DEFPRIM("zmq/recv",zmq_recv_prim,KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
-	"Receives a packet from a socket");
+
+KNO_DEFCPRIM("zmq/recv",zmq_recv_prim,
+	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
+	     "Receives a packet from a socket",
+	     "s",kno_any_type,KNO_VOID,
+	     "opts",kno_any_type,KNO_VOID)
 static lispval zmq_recv_prim(lispval s,lispval opts)
 {
   ZMQ_CHECK_SOCK(s,"ZMQ/RECV");
@@ -709,10 +760,14 @@ static lispval zmq_recv_prim(lispval s,lispval opts)
 
 /* Utility functions */
 
-DEFPRIM("zeromq?",zeromqp_prim,KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
-	"`(ZEROMQ? *obj* [*type*]) "
-	"Returns true if *obj* is a ZeroMQ object with "
-	"type *type* (when provided) and #f otherwise.");
+
+KNO_DEFCPRIM("zeromq?",zeromqp_prim,
+	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
+	     "`(ZEROMQ? *obj* [*type*]) "
+	     "Returns true if *obj* is a ZeroMQ object with "
+	     "type *type* (when provided) and #f otherwise.",
+	     "obj",kno_any_type,KNO_VOID,
+	     "typesym",kno_any_type,KNO_VOID)
 static lispval zeromqp_prim(lispval obj,lispval typesym)
 {
   if (KNO_TYPEP(obj,kno_zmqsock_type)) {
@@ -726,10 +781,13 @@ static lispval zeromqp_prim(lispval obj,lispval typesym)
   else return KNO_FALSE;
 }
 
-DEFPRIM("zmq/type",zeromq_type_prim,KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
-	"`(ZEROMQ/TYPE *obj*) "
-	"Returns the ZeroMQ type of *obj* or #f if it's "
-	"not a ZEROMQ object");
+
+KNO_DEFCPRIM("zmq/type",zeromq_type_prim,
+	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
+	     "`(ZEROMQ/TYPE *obj*) "
+	     "Returns the ZeroMQ type of *obj* or #f if it's "
+	     "not a ZEROMQ object",
+	     "obj",kno_any_type,KNO_VOID)
 static lispval zeromq_type_prim(lispval obj)
 {
   if (KNO_TYPEP(obj,kno_zmqsock_type)) {
@@ -907,13 +965,18 @@ static void kno_zeromq_thread_cleanup()
 
 /* The proxy function */
 
-DEFPRIM("zmq/proxy!",zmq_proxy_prim,KNO_MAX_ARGS(3)|KNO_MIN_ARGS(2),
-	"`(ZMQ/PROXY! *frontend* *backend* [*capture*])` "
-	"starts a synchronouse proxy passing messages from "
-	"*frontend* to *backend*. It terminates when the "
-	"zeromq context is closed. If provided, all "
-	"messages are also sent to *capture*. All "
-	"arguments should be ZMQ sockets.");
+
+KNO_DEFCPRIM("zmq/proxy!",zmq_proxy_prim,
+	     KNO_MAX_ARGS(3)|KNO_MIN_ARGS(2),
+	     "`(ZMQ/PROXY! *frontend* *backend* [*capture*])` "
+	     "starts a synchronouse proxy passing messages from "
+	     "*frontend* to *backend*. It terminates when the "
+	     "zeromq context is closed. If provided, all "
+	     "messages are also sent to *capture*. All "
+	     "arguments should be ZMQ sockets.",
+	     "front_addr",KNO_ZMQSOCK_TYPE,KNO_VOID,
+	     "front_type",KNO_ZMQSOCK_TYPE,KNO_VOID,
+	     "back_addr",KNO_ZMQSOCK_TYPE,KNO_VOID)
 static lispval zmq_proxy_prim(lispval front,lispval back,lispval capture)
 {
   int rv = zmq_proxy(ZMQ_SOCKPTR(front),ZMQ_SOCKPTR(back),
@@ -929,13 +992,17 @@ static lispval zmq_proxy_prim(lispval front,lispval back,lispval capture)
 }
 
 #if 0
-DEFPRIM("zmq/proxy!",zmq_proxy_prim,KNO_MAX_ARGS(3)|KNO_MIN_ARGS(2),
-	"`(ZMQ/PROXY! *frontend* *backend* [*capture*])` "
-	"starts a synchronouse proxy passing messages from "
-	"*frontend* to *backend*. It terminates when the "
-	"zeromq context is closed. If provided, all "
-	"messages are also sent to *capture*. All "
-	"arguments should be ZMQ sockets.");
+KNO_DEFCPRIM("zmq/proxy!",zmq_proxy_prim,
+	     KNO_MAX_ARGS(3)|KNO_MIN_ARGS(2),
+	     "`(ZMQ/PROXY! *frontend* *backend* [*capture*])` "
+	     "starts a synchronouse proxy passing messages from "
+	     "*frontend* to *backend*. It terminates when the "
+	     "zeromq context is closed. If provided, all "
+	     "messages are also sent to *capture*. All "
+	     "arguments should be ZMQ sockets.",
+	     "front_addr",kno_zmqsocket_type,KNO_VOID,
+	     "front_type",kno_zmqsocket_type,KNO_VOID,
+	     "back_addr",kno_zmqsocket_type,KNO_VOID)
 static lispval zmq_proxy_prim(lispval front_addr,lispval front_type,
 			      lispval back_addr,lispval back_type,
 			      lispval capture)
@@ -1046,21 +1113,21 @@ KNO_EXPORT int kno_init_zeromq()
 
 static void link_local_cprims()
 {
-  KNO_LINK_PRIM("zmq/type",zeromq_type_prim,1,zeromq_module);
-  KNO_LINK_PRIM("zeromq?",zeromqp_prim,2,zeromq_module);
-  KNO_LINK_PRIM("zmq/recv",zmq_recv_prim,2,zeromq_module);
-  KNO_LINK_PRIM("zmq/send!",zmq_send_prim,3,zeromq_module);
-  KNO_LINK_PRIM("zmq/listen",zmq_listen_prim,2,zeromq_module);
-  KNO_LINK_PRIM("zmq/open",zmq_open_prim,2,zeromq_module);
-  KNO_LINK_PRIM("zmq/sockopt!",zmq_setsockopt_prim,3,zeromq_module);
-  KNO_LINK_PRIM("zmq/sockopt",zmq_getsockopt_prim,2,zeromq_module);
-  KNO_LINK_PRIM("zmq/disconnect!",zmq_disconnect_prim,2,zeromq_module);
-  KNO_LINK_PRIM("zmq/connect!",zmq_connect_prim,2,zeromq_module);
-  KNO_LINK_PRIM("zmq/unbind!",zmq_unbind_prim,2,zeromq_module);
-  KNO_LINK_PRIM("zmq/bind!",zmq_bind_prim,2,zeromq_module);
-  KNO_LINK_PRIM("zmq/close",zmq_close_prim,1,zeromq_module);
-  KNO_LINK_PRIM("zmq/socket",zmq_socket_prim,1,zeromq_module);
-  KNO_LINK_PRIM("zeromq/shutdown!",zeromq_shutdown_prim,0,zeromq_module);
+  KNO_LINK_CPRIM("zmq/type",zeromq_type_prim,1,zeromq_module);
+  KNO_LINK_CPRIM("zeromq?",zeromqp_prim,2,zeromq_module);
+  KNO_LINK_CPRIM("zmq/recv",zmq_recv_prim,2,zeromq_module);
+  KNO_LINK_CPRIM("zmq/send!",zmq_send_prim,3,zeromq_module);
+  KNO_LINK_CPRIM("zmq/listen",zmq_listen_prim,2,zeromq_module);
+  KNO_LINK_CPRIM("zmq/open",zmq_open_prim,2,zeromq_module);
+  KNO_LINK_CPRIM("zmq/sockopt!",zmq_setsockopt_prim,3,zeromq_module);
+  KNO_LINK_CPRIM("zmq/sockopt",zmq_getsockopt_prim,2,zeromq_module);
+  KNO_LINK_CPRIM("zmq/disconnect!",zmq_disconnect_prim,2,zeromq_module);
+  KNO_LINK_CPRIM("zmq/connect!",zmq_connect_prim,2,zeromq_module);
+  KNO_LINK_CPRIM("zmq/unbind!",zmq_unbind_prim,2,zeromq_module);
+  KNO_LINK_CPRIM("zmq/bind!",zmq_bind_prim,2,zeromq_module);
+  KNO_LINK_CPRIM("zmq/close",zmq_close_prim,1,zeromq_module);
+  KNO_LINK_CPRIM("zmq/socket",zmq_socket_prim,1,zeromq_module);
+  KNO_LINK_CPRIM("zeromq/shutdown!",zeromq_shutdown_prim,0,zeromq_module);
 
   KNO_LINK_TYPED("zmq/proxy!",zmq_proxy_prim,3,zeromq_module,
 		 kno_zmqsock_type,KNO_VOID,
