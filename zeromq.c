@@ -1076,8 +1076,7 @@ KNO_EXPORT int kno_init_zeromq()
   else zeromq_init = u8_millitime();
   zeromq_module = kno_new_cmodule("zeromq",0,kno_init_zeromq);
 
-  kno_zmqsock_type = kno_register_cons_type("ZMQsocket");
-  kno_add_type_alias(KNO_ZMQSOCK_TYPE,kno_zmqsock_type);
+  kno_zmqsock_type = kno_register_cons_type("ZMQsocket",KNO_ZMQSOCK_TYPE);
 
   u8_init_mutex(&zeromq_ctx_lock);
   u8_register_threadexit(kno_zeromq_thread_cleanup);
