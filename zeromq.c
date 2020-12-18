@@ -168,11 +168,11 @@ static ssize_t zmq_add_socket(struct KNO_ZMQSOCK *socket);
 static struct KNO_ZMQSOCK *zmq_sock(lispval typesym)
 {
   int socktype = get_socket_type(typesym);
-  if (PRED_FALSE(socktype<0)) {
+  if (RARELY(socktype<0)) {
     kno_type_error("ZeroMQ socket type","zmq_sock",typesym);
     return NULL;}
   void *ctx = KNO_ZMQ_CTX;
-  if (PRED_FALSE(ctx == NULL)) {
+  if (RARELY(ctx == NULL)) {
     kno_err("No ZMQ context","zmq_sock",NULL,VOID);
     return NULL;}
   struct KNO_ZMQSOCK *zmq = u8_alloc(KNO_ZMQSOCK);
@@ -197,10 +197,10 @@ static struct KNO_ZMQSOCK *zmq_sock(lispval typesym)
 static lispval zmq_sockptr(void *ptr,lispval typesym,lispval id)
 {
   int socktype = get_socket_type(typesym);
-  if (PRED_FALSE(socktype<0))
+  if (RARELY(socktype<0))
     return kno_type_error("ZeroMQ socket type","zmq_sock",typesym);
   void *ctx = KNO_ZMQ_CTX;
-  if (PRED_FALSE(ctx == NULL))
+  if (RARELY(ctx == NULL))
     return kno_err("No ZMQ context","zmq_sock",NULL,VOID);
   struct KNO_ZMQSOCK *zmq = u8_alloc(KNO_ZMQSOCK);
   if (zmq == NULL) return KNO_ERROR;
@@ -282,7 +282,7 @@ static lispval zmq_error(u8_context cxt,lispval obj)
 #define ZMQ_CHECK_SOCK(x,caller)					\
   kno_zmqsock U8_MAYBE_UNUSED x ## _zmq;                                \
   void U8_MAYBE_UNUSED * x ## _ptr;                                     \
-  if (PRED_FALSE( ( !(KNO_TYPEP(x,kno_zmqsock_type)) ) ))               \
+  if (RARELY( ( !(KNO_TYPEP(x,kno_zmqsock_type)) ) ))               \
     return kno_err(kno_TypeError,caller,"zmqsock",x);			\
   else {                                                                \
     x ## _zmq = (kno_zmqsock) x;					\
