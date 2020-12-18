@@ -763,7 +763,7 @@ static lispval zmq_recv_prim(lispval s,lispval opts)
 
 KNO_DEFCPRIM("zeromq?",zeromqp_prim,
 	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
-	     "`(ZEROMQ? *obj* [*type*]) "
+	     "
 	     "Returns true if *obj* is a ZeroMQ object with "
 	     "type *type* (when provided) and #f otherwise.",
 	     {"obj",kno_any_type,KNO_VOID},
@@ -784,7 +784,7 @@ static lispval zeromqp_prim(lispval obj,lispval typesym)
 
 KNO_DEFCPRIM("zmq/type",zeromq_type_prim,
 	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
-	     "`(ZEROMQ/TYPE *obj*) "
+	     "
 	     "Returns the ZeroMQ type of *obj* or #f if it's "
 	     "not a ZEROMQ object",
 	     {"obj",kno_any_type,KNO_VOID})
@@ -968,7 +968,6 @@ static void kno_zeromq_thread_cleanup()
 
 KNO_DEFCPRIM("zmq/proxy!",zmq_proxy_prim,
 	     KNO_MAX_ARGS(3)|KNO_MIN_ARGS(2),
-	     "`(ZMQ/PROXY! *frontend* *backend* [*capture*])` "
 	     "starts a synchronouse proxy passing messages from "
 	     "*frontend* to *backend*. It terminates when the "
 	     "zeromq context is closed. If provided, all "
@@ -994,7 +993,6 @@ static lispval zmq_proxy_prim(lispval front,lispval back,lispval capture)
 #if 0
 KNO_DEFCPRIM("zmq/proxy!",zmq_proxy_prim,
 	     KNO_MAX_ARGS(3)|KNO_MIN_ARGS(2),
-	     "`(ZMQ/PROXY! *frontend* *backend* [*capture*])` "
 	     "starts a synchronouse proxy passing messages from "
 	     "*frontend* to *backend*. It terminates when the "
 	     "zeromq context is closed. If provided, all "
