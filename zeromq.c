@@ -1,7 +1,7 @@
 /* -*- Mode: C; Character-encoding: utf-8; -*- */
 
-/* sqlite.c
-   This implements Kno bindings to sqlite3.
+/* zeromq.c
+   This implements Kno bindings to the ZeroMQ message library
    Copyright (C) 2007-2019 beingmeta, inc.
 */
 
@@ -168,11 +168,11 @@ static ssize_t zmq_add_socket(struct KNO_ZMQSOCK *socket);
 static struct KNO_ZMQSOCK *zmq_sock(lispval typesym)
 {
   int socktype = get_socket_type(typesym);
-  if (RARELY(socktype<0)) {
+  if (KNO_RARELY(socktype<0)) {
     kno_type_error("ZeroMQ socket type","zmq_sock",typesym);
     return NULL;}
   void *ctx = KNO_ZMQ_CTX;
-  if (RARELY(ctx == NULL)) {
+  if (KNO_RARELY(ctx == NULL)) {
     kno_err("No ZMQ context","zmq_sock",NULL,VOID);
     return NULL;}
   struct KNO_ZMQSOCK *zmq = u8_alloc(KNO_ZMQSOCK);
@@ -197,10 +197,10 @@ static struct KNO_ZMQSOCK *zmq_sock(lispval typesym)
 static lispval zmq_sockptr(void *ptr,lispval typesym,lispval id)
 {
   int socktype = get_socket_type(typesym);
-  if (RARELY(socktype<0))
+  if (KNO_RARELY(socktype<0))
     return kno_type_error("ZeroMQ socket type","zmq_sock",typesym);
   void *ctx = KNO_ZMQ_CTX;
-  if (RARELY(ctx == NULL))
+  if (KNO_RARELY(ctx == NULL))
     return kno_err("No ZMQ context","zmq_sock",NULL,VOID);
   struct KNO_ZMQSOCK *zmq = u8_alloc(KNO_ZMQSOCK);
   if (zmq == NULL) return KNO_ERROR;
@@ -282,7 +282,7 @@ static lispval zmq_error(u8_context cxt,lispval obj)
 #define ZMQ_CHECK_SOCK(x,caller)					\
   kno_zmqsock U8_MAYBE_UNUSED x ## _zmq;                                \
   void U8_MAYBE_UNUSED * x ## _ptr;                                     \
-  if (RARELY( ( !(KNO_TYPEP(x,kno_zmqsock_type)) ) ))               \
+  if (KNO_RARELY( ( !(KNO_TYPEP(x,kno_zmqsock_type)) ) ))               \
     return kno_err(kno_TypeError,caller,"zmqsock",x);			\
   else {                                                                \
     x ## _zmq = (kno_zmqsock) x;					\
@@ -763,7 +763,6 @@ static lispval zmq_recv_prim(lispval s,lispval opts)
 
 KNO_DEFCPRIM("zeromq?",zeromqp_prim,
 	     KNO_MAX_ARGS(2)|KNO_MIN_ARGS(1),
-	     "
 	     "Returns true if *obj* is a ZeroMQ object with "
 	     "type *type* (when provided) and #f otherwise.",
 	     {"obj",kno_any_type,KNO_VOID},
@@ -784,7 +783,6 @@ static lispval zeromqp_prim(lispval obj,lispval typesym)
 
 KNO_DEFCPRIM("zmq/type",zeromq_type_prim,
 	     KNO_MAX_ARGS(1)|KNO_MIN_ARGS(1),
-	     "
 	     "Returns the ZeroMQ type of *obj* or #f if it's "
 	     "not a ZEROMQ object",
 	     {"obj",kno_any_type,KNO_VOID})
