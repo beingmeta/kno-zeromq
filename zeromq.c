@@ -37,7 +37,7 @@ static u8_condition ZeroMQ_WrongThread =
 KNO_EXPORT int kno_init_zeromq(void) KNO_LIBINIT_FN;
 
 kno_lisp_type kno_zmqsock_type;
-#define KNO_ZMQSOCK_TYPE 0xded5cdfeeb3620L
+#define KNO_ZMQSOCK_TYPE 0x90c7c50L
 
 #if DEBUG_ZEROMQ
 static u8_mutex socket_counter_lock;
