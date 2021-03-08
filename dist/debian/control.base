@@ -1,7 +1,7 @@
 Source: kno-zeromq
 Priority: optional
 Maintainer: Ken Haase <kh@beingmeta.com>
-Build-Depends: debhelper (>= 8.0.0), autotools-dev, debsigs, devscripts, libu8-dev, libzmq5, kno-dev (>= @KNO_MAJOR@)
+Build-Depends: debhelper (>= 8.0.0), autotools-dev, debsigs, devscripts, libu8-dev, libzmq5-dev, kno-dev (>= @KNO_MAJOR@)
 Standards-Version: 3.9.4
 Section: libs
 Homepage: http://www.beingmeta.com/
