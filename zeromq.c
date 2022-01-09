@@ -3,7 +3,7 @@
 /* zeromq.c
    This implements Kno bindings to the ZeroMQ message library
    Copyright (C) 2007-2019 beingmeta, inc.
-   Copyright (C) 2020-2021 beingmeta, LLC
+   Copyright (C) 2020-2022 beingmeta, LLC
 */
 
 #ifndef _FILEINFO
