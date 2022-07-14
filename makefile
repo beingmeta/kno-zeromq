@@ -46,7 +46,7 @@ APK_ARCH_DIR      = ${APKREPO}/staging/${ARCH}
 default build: ${PKG_NAME}.${libsuffix}
 
 zeromq.o: zeromq.c makefile
-	@$(CC) $(CFLAGS) -D_FILEINFO="\"$(shell u8_fileinfo ./$< $(dirname $(pwd))/)\"" -o $@ -c $<
+	@$(CC) $(CFLAGS)  -o $@ -c $<
 	@$(MSG) CC "(ZEROMQ)" $@
 zeromq.so: zeromq.o
 	$(MKSO) $(LDFLAGS) -o $@ zeromq.o ${LDFLAGS}
